@@ -12,8 +12,6 @@ const [nextBranch] = allBranches
   .filter(branch => branch && branch.startsWith('release'))
   .filter(branch => branch > currentBranch);
 
-console.log(currentBranch, nextBranch);
-
 execSync(`git checkout ${nextBranch}`);
 execSync(`git merge ${currentBranch}`);
 execSync(`git push origin ${nextBranch}`);
