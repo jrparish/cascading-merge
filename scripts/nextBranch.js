@@ -1,5 +1,4 @@
 const { execSync } = require('child_process');
-const semver = require('semver');
 
 const currentBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 const currentVersion = currentBranch.slice(currentBranch.indexOf('/') + 1).trim();
@@ -11,8 +10,6 @@ const [nextBranch] = allBranches
   .map(branch => branch.slice(branch.indexOf('/') + 1).trim())
   .filter(branch => branch && branch.startsWith('release'))
   .filter(branch => branch > currentBranch);
-
-console.log(currentBranch, nextBranch);
 
 execSync(`git checkout ${nextBranch}`);
 execSync(`git merge ${currentBranch}`);
