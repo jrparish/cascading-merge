@@ -7,6 +7,7 @@ console.debug('currentBranch', currentBranch);
 console.debug('currentVersion', currentVersion);
 
 if (currentBranch === 'develop' || !currentBranch.startsWith('release')) {
+  console.debug('Clean exit');
   return;
 }
 
@@ -26,3 +27,5 @@ console.debug('nextBranch', nextBranch);
 execSync(`git checkout --track origin/${nextBranch}`);
 execSync(`git merge ${currentBranch}`);
 execSync(`git push origin ${nextBranch}`);
+
+console.debug('Cascade complete');
