@@ -16,10 +16,10 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      - run:
-        - git fetch --prune --unshallow
-        - git config user.email "jacob.parish.1@gmail.com"
-        - git config user.name "Jacob Parish"
+      - run: |
+          git fetch --prune --unshallow
+          git config user.email "jacob.parish.1@gmail.com"
+          git config user.name "Jacob Parish"
 
       - name: Setup Node
         uses: actions/setup-node@v1
