@@ -1,5 +1,4 @@
 const { execSync } = require('child_process');
-const semver = require('semver');
 
 const currentBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 const currentVersion = currentBranch.slice(currentBranch.indexOf('/') + 1).trim();
