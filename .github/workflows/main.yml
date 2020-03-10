@@ -14,8 +14,7 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      - run: |
-          git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+      - run: git fetch --prune --unshallow
 
       - name: Setup Node
         uses: actions/setup-node@v1
