@@ -10,7 +10,7 @@ if (currentBranch === 'develop' || !currentBranch.startsWith('release')) {
   return;
 }
 
-const allBranches = execSync('git branch -r --format=%(refname:short)').toString();
+const allBranches = execSync(`git branch -r --list 'origin/release/*'`).toString();
 let [nextBranch] = allBranches
   .split(/\r?\n/)
   .map(branch => branch.slice(branch.indexOf('/') + 1).trim())
