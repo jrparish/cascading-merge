@@ -3,6 +3,9 @@ const { execSync } = require('child_process');
 const currentBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 const currentVersion = currentBranch.slice(currentBranch.indexOf('/') + 1).trim();
 
+console.debug('currentBranch', currentBranch);
+console.debug('currentVersion', currentVersion);
+
 if (currentBranch === 'develop' || !currentBranch.startsWith('release')) {
   return;
 }
@@ -17,6 +20,8 @@ let [nextBranch] = allBranches
 if (!nextBranch) {
   nextBranch = 'develop';
 }
+
+console.debug('nextBranch', nextBranch);
 
 execSync(`git checkout ${nextBranch}`);
 execSync(`git merge ${currentBranch}`);
