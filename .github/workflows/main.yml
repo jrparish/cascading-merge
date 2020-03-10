@@ -8,8 +8,6 @@ on:
 jobs:
   cascading-merge:
     runs-on: ubuntu-latest
-    env:
-      github.token: ${{ secrets.GH_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
