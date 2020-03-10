@@ -10,7 +10,7 @@ if (currentBranch === 'develop' || !currentBranch.startsWith('release')) {
   return;
 }
 
-const allBranches = execSync(`git branch -r --list 'origin/release/*'`).toString();
+const allBranches = execSync(`git branch -r`).toString();
 let [nextBranch] = allBranches
   .split(/\r?\n/)
   .map(branch => branch.slice(branch.indexOf('/') + 1).trim())
@@ -23,6 +23,6 @@ if (!nextBranch) {
 
 console.debug('nextBranch', nextBranch);
 
-execSync(`git checkout ${nextBranch}`);
+execSync(`git checkout --track origin/${nextBranch}`);
 execSync(`git merge ${currentBranch}`);
 execSync(`git push origin ${nextBranch}`);
