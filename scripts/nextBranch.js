@@ -46,7 +46,7 @@ if (tokenizedNextVersion) {
 console.debug('nextBranch', nextBranch);
 
 execSync(`git checkout --track origin/${nextBranch}`);
-execSync(`git merge ${currentBranch}`);
+execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
 execSync(`git push origin ${nextBranch}`);
 
 console.debug('Cascade complete');
