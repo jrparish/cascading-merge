@@ -78,9 +78,9 @@ export default function isFirstBranchNewer(branchA, branchB) {
   }
 
   /**
-   * Reaching this point means the current version had all of the branch
-   * version's tokens and then some, meaning the current version is
-   * newer (later) than the branch version.
+   * Reaching this point means the branchB version had all of the branchA
+   * version's tokens and then some, meaning the branchB version is
+   * newer (later) than the branchA version.
    */
   return false;
 }
