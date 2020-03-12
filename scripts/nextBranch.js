@@ -52,20 +52,23 @@ try {
   execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
-  const prReq = https.request({
+  const req = https.request({
     host: 'api.github.com',
     path: '/repos/jrparish/cascading-merge/pulls',
-    method: 'POST'
+    method: 'POST',
+    headers: {
+      Authorization: `token ${process.env.GH_TOKEN}`
+    }
   }, (res) => {
-    res.on('error', (err) => console.error(err));
-    res.on('end', () => console.debug('Github PR complete'))
+    console.debug(res.statusCode);
   });
-  prReq.write(JSON.stringify({
+  req.on('error', (err) => console.error(err));
+  req.write(JSON.stringify({
     title: `chore: merge '${currentBranch}' into ${nextBranch}`,
     head: currentBranch,
     base: nextBranch
   }));
-  prReq.end();
+  req.end();
 }
 
 console.debug('Cascade complete');
