@@ -1,6 +1,6 @@
 const { execSync } = require('child_process');
 const isFirstBranchNewer = require('../utils/isFirstBranchNewer');
-const http = require('http');
+const https = require('https');
 
 const currentBranch = execSync('git rev-parse --abbrev-ref HEAD')
   .toString()
@@ -52,8 +52,8 @@ try {
   execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
-  const prReq = http.request({
-    host: 'https://api.github.com',
+  const prReq = https.request({
+    host: 'api.github.com',
     path: '/repos/jrparish/cascading-merge/pulls',
     method: 'POST'
   }, (res) => {
