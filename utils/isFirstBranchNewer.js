@@ -3,17 +3,17 @@
  * https://confluence.atlassian.com/bitbucketserver/automatic-branch-merging-776639993.html#Automaticbranchmerging-ordering
  *
  * Only branches that begin with the prefix 'release/' are examined
- * 
+ *
  * Branch names are split into tokens using any of these characters: underscore '_', hyphen '-',
  *  plus '+', or period '.'
- * 
+ *
  * Branches are ordered by number, if a given token is numeric. When comparing a numeric token
  *  with an ASCII token, the numeric is ranked higher (i.e. is considered as being a newer
  *  version)
- * 
+ *
  * If both tokens are non-numeric, a simple ASCII comparison is used
  */
-export default function isFirstBranchNewer(branchA, branchB) {
+module.exports = function isFirstBranchNewer(branchA, branchB) {
   for (const [index, branchAToken] of branchA.tokens.entries()) {
     const branchBToken = branchB.tokens[index];
 
