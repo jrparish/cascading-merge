@@ -34,12 +34,13 @@ const tokenizedCurrentVersion = {
   tokens: currentVersion.split(/[_\-+.]+/)
 };
 
-let nextBranch = allOtherTokenizedReleaseBranchVersions
+const [tokenizedNextVersion] = allOtherTokenizedReleaseBranchVersions
   .filter(version => isFirstBranchNewer(version, tokenizedCurrentVersion))
-  .sort(isFirstBranchNewer)[0];
+  .sort(isFirstBranchNewer);
 
-if (!nextBranch) {
-  nextBranch = 'develop';
+let nextBranch = 'develop';
+if (tokenizedNextVersion) {
+  nextBranch = `release/${tokenizedNextVersion.version}`
 }
 
 console.debug('nextBranch', nextBranch);
