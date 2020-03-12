@@ -1,5 +1,6 @@
 const { execSync } = require('child_process');
 const isFirstBranchNewer = require('../utils/isFirstBranchNewer');
+const http = require('http');
 
 const currentBranch = execSync('git rev-parse --abbrev-ref HEAD')
   .toString()
@@ -46,7 +47,25 @@ if (tokenizedNextVersion) {
 console.debug('nextBranch', nextBranch);
 
 execSync(`git checkout --track origin/${nextBranch}`);
-execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
-execSync(`git push origin ${nextBranch}`);
+
+try {
+  execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
+  execSync(`git push origin ${nextBranch}`);
+} catch (e) {
+  const prReq = http.request({
+    host: 'https://api.github.com',
+    path: '/repos/jrparish/cascading-merge/pulls',
+    method: 'POST'
+  }, (res) => {
+    res.on('error', (err) => console.error(err));
+    res.on('end', () => console.debug('Github PR complete'))
+  });
+  prReq.write({
+    title: `chore: merge '${currentBranch}' into ${nextBranch}`,
+    head: currentBranch,
+    base: nextBranch
+  });
+  prReq.end();
+}
 
 console.debug('Cascade complete');
