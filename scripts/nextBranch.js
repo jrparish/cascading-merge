@@ -1,22 +1,42 @@
 const { execSync } = require('child_process');
+const isFirstBranchNewer = require('../utils/isFirstBranchNewer');
 
-const currentBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
-const currentVersion = currentBranch.slice(currentBranch.indexOf('/') + 1).trim();
+const currentBranch = execSync('git rev-parse --abbrev-ref HEAD')
+  .toString()
+  .trim();
 
 console.debug('currentBranch', currentBranch);
-console.debug('currentVersion', currentVersion);
 
-if (currentBranch === 'develop' || !currentBranch.startsWith('release')) {
+if (currentBranch === 'develop' || !currentBranch.startsWith('release/')) {
   console.debug('Clean exit');
   return;
 }
 
-const allBranches = execSync(`git branch -r`).toString();
-let [nextBranch] = allBranches
-  .split(/\r?\n/)
-  .map(branch => branch.slice(branch.indexOf('/') + 1).trim())
-  .filter(branch => branch && branch.startsWith('release'))
-  .filter(branch => branch > currentBranch);
+const currentVersion = currentBranch.slice(currentBranch.indexOf('/') + 1).trim();
+
+const allBranches = execSync(`git branch -r`)
+  .toString()
+  .split(/\r?\n/);
+
+const allOtherReleaseBranchVersions = allBranches
+  .map(branch => branch.slice(branch.indexOf('/') + 1).trim()) // Trim the origin/ prefix
+  .filter(branch => branch.startsWith('release/')) // Only include branches that start with release/
+  .map(branch => branch.slice(branch.indexOf('/') + 1)) // Trim the release/ prefix
+  .filter(version => version !== currentVersion); // Filter out the current branch version
+
+const allOtherTokenizedReleaseBranchVersions = allOtherReleaseBranchVersions.map(version => ({
+  version,
+  tokens: version.split(/[_\-+.]+/)
+}));
+
+const tokenizedCurrentVersion = {
+  version: currentVersion,
+  tokens: currentVersion.split(/[_\-+.]+/)
+};
+
+let nextBranch = allOtherTokenizedReleaseBranchVersions
+  .filter(version => isFirstBranchNewer(version, tokenizedCurrentVersion))
+  .sort(isFirstBranchNewer)[0];
 
 if (!nextBranch) {
   nextBranch = 'develop';
