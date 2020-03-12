@@ -52,6 +52,7 @@ try {
   execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
+  console.debug('Token exists', !!process.env.GH_TOKEN);
   const req = https.request({
     host: 'api.github.com',
     path: '/repos/jrparish/cascading-merge/pulls',
