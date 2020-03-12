@@ -25,5 +25,10 @@ jobs:
         with:
           node-version: 12
 
+      - name: Install Deps
+        uses: bahmutov/npm-install@v1
+
       - name: Perform Merge
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: node ./scripts/nextBranch
