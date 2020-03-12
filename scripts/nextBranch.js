@@ -60,11 +60,11 @@ try {
     res.on('error', (err) => console.error(err));
     res.on('end', () => console.debug('Github PR complete'))
   });
-  prReq.write({
+  prReq.write(JSON.stringify({
     title: `chore: merge '${currentBranch}' into ${nextBranch}`,
     head: currentBranch,
     base: nextBranch
-  });
+  }));
   prReq.end();
 }
 
