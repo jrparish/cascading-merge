@@ -28,4 +28,6 @@ jobs:
       - name: Perform Merge
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: node ./scripts/nextBranch
+        run: |
+          yarn
+          node ./scripts/nextBranch
