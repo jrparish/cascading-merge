@@ -53,8 +53,9 @@ try {
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
   console.debug('Token exists', !!process.env.GH_TOKEN);
-  const prBranchName = `feature/merge-conflict-${tokenizedCurrentVersion.version}-to-${tokenizedNextVersion.version}`;
+  const prBranchName = `feature/merge-conflict-${tokenizedCurrentVersion.version}-to-${tokenizedNextVersion ? tokenizedNextVersion.version : 'develop'}`;
   execSync(`git checkout -b ${prBranchName}`);
+  execSync(`git push origin ${prBranchName}`);
   axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
     title: `chore: merge '${currentBranch}' into ${nextBranch}`,
     head: prBranchName,
