@@ -1,6 +1,6 @@
 const { execSync } = require('child_process');
 const isFirstBranchNewer = require('../utils/isFirstBranchNewer');
-const https = require('https');
+const axios = require('axios');
 
 const currentBranch = execSync('git rev-parse --abbrev-ref HEAD')
   .toString()
@@ -53,23 +53,16 @@ try {
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
   console.debug('Token exists', !!process.env.GH_TOKEN);
-  const req = https.request({
-    host: 'api.github.com',
-    path: '/repos/jrparish/cascading-merge/pulls',
-    method: 'POST',
-    headers: {
-      Authorization: `token ${process.env.GH_TOKEN}`
-    }
-  }, (res) => {
-    console.debug(res.statusCode);
-  });
-  req.on('error', (err) => console.error(err));
-  req.write(JSON.stringify({
+  axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
     title: `chore: merge '${currentBranch}' into ${nextBranch}`,
     head: currentBranch,
     base: nextBranch
-  }));
-  req.end();
+  }, {
+    headers: {
+      Authorization: `token ${process.env.GH_TOKEN}`
+    }
+  })
+  .catch(e => console.error(e));
 }
 
 console.debug('Cascade complete');
