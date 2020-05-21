@@ -59,7 +59,7 @@ try {
 } catch (e) {
   try {
     execSync('python ./utils/resolveVersionConflict.py ./package.json overwrite', { stdio: 'inherit' })
-    execSync('git add package.json')
+    execSync('git add package.json', { stdio: 'inherit' })
     const conflicts = execSync('git diff --check | grep -i conflict', { stdio: 'inherit' })
     console.log(conflicts.toString());
     if (conflicts.toString()) {
