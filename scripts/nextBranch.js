@@ -67,7 +67,8 @@ try {
     }
     execSync(`git commit -m "Merge branch '${currentBranch}' into ${nextBranch}"`);
     execSync(`git push origin ${nextBranch}`);
-  } catch (e) {
+  } catch (b) {
+    console.log(b);
     execSync(`git push origin ${prBranchName}`);
     axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
       title: `chore: merge '${currentBranch}' into ${nextBranch}`,
