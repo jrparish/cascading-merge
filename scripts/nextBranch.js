@@ -57,17 +57,26 @@ try {
   execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
-  execSync(`git push origin ${prBranchName}`);
-  axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
-    title: `chore: merge '${currentBranch}' into ${nextBranch}`,
-    head: prBranchName,
-    base: nextBranch
-  }, {
-    headers: {
-      Authorization: `token ${process.env.GH_TOKEN}`
+  try {
+    execSync('py ./utils/resolveVersionConflict.py ./package.json overwrite')
+    execSync('git add package.json')
+    if (execSync('git diff --check | grep -i conflict')) {
+      throw new Error('There are still conflicts remaining.')
     }
-  })
-  .catch(e => console.error(e));
+    execSync(`git push origin ${nextBranch}`);
+  } catch (e) {
+    execSync(`git push origin ${prBranchName}`);
+    axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
+      title: `chore: merge '${currentBranch}' into ${nextBranch}`,
+      head: prBranchName,
+      base: nextBranch
+    }, {
+      headers: {
+        Authorization: `token ${process.env.GH_TOKEN}`
+      }
+    })
+      .catch(e => console.error(e));
+  }
 }
 
 console.debug('Cascade complete');

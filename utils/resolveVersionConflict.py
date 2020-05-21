@@ -3,10 +3,10 @@
 # The conflict resolution logic goes here.
 # Should return the replacement_string, or None if you don't wish to resolve this conflict.
 def resolve_conflict(head, theirs, entire_conflict):
-    if head.find('"version":') > 0:
-        return head
+    if head.find('"version":') == -1:
+        raise Exception("Found non-version related conflict, exiting auto resolution")
     else:
-        return entire_conflict
+        return head
 
 # ----------------------------------------
 
@@ -64,6 +64,9 @@ if __name__ == '__main__':
         print()
         print('--------------------')
         print()
+
+    if len(replacements) > 1:
+        raise Exception("Found multiple conflicts, exiting auto resolution")
 
     # Perform the replacements in reverse, so as not to mess up the indices.
     result_text = source_text
