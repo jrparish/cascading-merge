@@ -58,7 +58,7 @@ try {
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
   try {
-    execSync('py ./utils/resolveVersionConflict.py ./package.json overwrite')
+    execSync('python ./utils/resolveVersionConflict.py ./package.json overwrite')
     execSync('git add package.json')
     if (execSync('git diff --check | grep -i conflict')) {
       throw new Error('There are still conflicts remaining.')
