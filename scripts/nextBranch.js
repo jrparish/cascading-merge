@@ -60,9 +60,12 @@ try {
   try {
     execSync('python ./utils/resolveVersionConflict.py ./package.json overwrite', { stdio: 'inherit' })
     execSync('git add package.json')
-    if (execSync('git diff --check | grep -i conflict', { stdio: 'inherit' })) {
-      throw new Error('There are still conflicts remaining.')
+    const conflicts = execSync('git diff --check | grep -i conflict', { stdio: 'inherit' })
+    console.log(conflicts.toString());
+    if (conflicts.toString()) {
+      throw new Error('There are still conflicts remaining.');
     }
+    execSync(`git commit -m "Merge branch '${currentBranch}' into ${nextBranch}"`);
     execSync(`git push origin ${nextBranch}`);
   } catch (e) {
     execSync(`git push origin ${prBranchName}`);
