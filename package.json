@@ -1,6 +1,6 @@
 {
   "name": "cascading-merge",
-  "version": "1.0.3",
+  "version": "1.2.0",
   "main": "index.js",
   "repository": "https://github.com/jrparish/cascading-merge.git",
   "author": "Jacob Parish <jacob.parish.1@gmail.com>",
@@ -8,10 +8,14 @@
   "private": true,
   "prettier": "@d3banking/prettier-config",
   "devDependencies": {
+    "@d3banking/eslint-config": "^18.2.0",
     "@d3banking/prettier-config": "^1.1.0",
-    "prettier": "^1.19.1"
+    "eslint": "6.8",
+    "prettier": "^1.19.1",
+    "yargs": "^15.3.1"
   },
   "dependencies": {
     "axios": "^0.19.2"
-  }
+  },
+  "sripts": {}
 }
