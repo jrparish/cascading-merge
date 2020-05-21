@@ -1,6 +1,6 @@
 {
   "name": "cascading-merge",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "index.js",
   "repository": "https://github.com/jrparish/cascading-merge.git",
   "author": "Jacob Parish <jacob.parish.1@gmail.com>",
