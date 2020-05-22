@@ -70,8 +70,7 @@ if (hasConflict) {
     execSync('python ./utils/resolveVersionConflict.py ./package.json overwrite', { stdio: 'inherit' })
     execSync('git add package.json', { stdio: 'inherit' })
     const conflicts = execSync('git diff --check', { stdio: 'inherit' })
-    console.log(conflicts.toString());
-    if (conflicts.toString()) {
+    if (conflicts) {
       throw new Error('There are still conflicts remaining.');
     }
     execSync(`git commit -m "Merge branch '${currentBranch}' into ${nextBranch}"`);
