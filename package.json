@@ -1,6 +1,6 @@
 {
   "name": "cascading-merge",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": "index.js",
   "repository": "https://github.com/jrparish/cascading-merge.git",
   "author": "Jacob Parish <jacob.parish.1@gmail.com>",
@@ -10,7 +10,7 @@
   "devDependencies": {
     "@d3banking/eslint-config": "^18.2.0",
     "@d3banking/prettier-config": "^1.1.0",
-    "eslint": "6.8",
+    "eslint": "~6.8",
     "prettier": "^1.19.1",
     "yargs": "^15.3.1"
   },
