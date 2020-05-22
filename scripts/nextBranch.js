@@ -60,16 +60,16 @@ try {
   execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
-  console.error(e);
   hasConflict = true;
   requiresPr = true;
 }
 
 if (hasConflict) {
+  console.debug('<Conflict Detected>');
   try {
     execSync('python ./utils/resolveVersionConflict.py ./package.json overwrite', { stdio: 'inherit' })
     execSync('git add package.json', { stdio: 'inherit' })
-    const conflicts = execSync('git diff --check | grep -i conflict', { stdio: 'inherit' })
+    const conflicts = execSync('git diff --check', { stdio: 'inherit' })
     console.log(conflicts.toString());
     if (conflicts.toString()) {
       throw new Error('There are still conflicts remaining.');
@@ -84,6 +84,7 @@ if (hasConflict) {
 }
 
 if (requiresPr) {
+  console.debug('<PR is required>');
   execSync(`git push origin ${prBranchName}`);
   axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
     title: `chore: merge '${currentBranch}' into ${nextBranch}`,
