@@ -53,30 +53,47 @@ execSync(`git checkout -b ${prBranchName}`);
 // Next checkout our target next branch
 execSync(`git checkout --track origin/${nextBranch}`);
 
+let hasConflict = false;
+let requiresPr = false;
+
 try {
   execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
+  hasConflict = true;
+  requiresPr = true;
+}
+
+if (hasConflict) {
+  console.debug('<Conflict Detected>');
   try {
-    execSync('py ./utils/resolveVersionConflict.py ./package.json overwrite')
-    execSync('git add package.json')
-    if (execSync('git diff --check | grep -i conflict')) {
-      throw new Error('There are still conflicts remaining.')
+    execSync('python ./utils/resolveVersionConflict.py ./package.json overwrite', { stdio: 'inherit' })
+    execSync('git add package.json', { stdio: 'inherit' })
+    const conflicts = execSync('git diff --check', { stdio: 'inherit' })
+    if (conflicts) {
+      throw new Error('There are still conflicts remaining.');
     }
+    execSync(`git commit -m "Merge branch '${currentBranch}' into ${nextBranch}"`);
     execSync(`git push origin ${nextBranch}`);
+    requiresPr = false;
   } catch (e) {
-    execSync(`git push origin ${prBranchName}`);
-    axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
-      title: `chore: merge '${currentBranch}' into ${nextBranch}`,
-      head: prBranchName,
-      base: nextBranch
-    }, {
-      headers: {
-        Authorization: `token ${process.env.GH_TOKEN}`
-      }
-    })
-      .catch(e => console.error(e));
+    console.error(e);
+    requiresPr = true;
   }
+}
+
+if (requiresPr) {
+  console.debug('<PR is required>');
+  execSync(`git push origin ${prBranchName}`);
+  axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
+    title: `chore: merge '${currentBranch}' into ${nextBranch}`,
+    head: prBranchName,
+    base: nextBranch
+  }, {
+    headers: {
+      Authorization: `token ${process.env.GH_TOKEN}`
+    }
+  })
 }
 
 console.debug('Cascade complete');
