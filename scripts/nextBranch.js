@@ -53,10 +53,19 @@ execSync(`git checkout -b ${prBranchName}`);
 // Next checkout our target next branch
 execSync(`git checkout --track origin/${nextBranch}`);
 
+let hasConflict = false;
+let requiresPr = false;
+
 try {
   execSync(`git merge ${currentBranch}`, { stdio: 'inherit' });
   execSync(`git push origin ${nextBranch}`);
 } catch (e) {
+  console.error(e);
+  hasConflict = true;
+  requiresPr = true;
+}
+
+if (hasConflict) {
   try {
     execSync('python ./utils/resolveVersionConflict.py ./package.json overwrite', { stdio: 'inherit' })
     execSync('git add package.json', { stdio: 'inherit' })
@@ -67,20 +76,24 @@ try {
     }
     execSync(`git commit -m "Merge branch '${currentBranch}' into ${nextBranch}"`);
     execSync(`git push origin ${nextBranch}`);
-  } catch (b) {
-    console.log(b);
-    execSync(`git push origin ${prBranchName}`);
-    axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
-      title: `chore: merge '${currentBranch}' into ${nextBranch}`,
-      head: prBranchName,
-      base: nextBranch
-    }, {
-      headers: {
-        Authorization: `token ${process.env.GH_TOKEN}`
-      }
-    })
-      .catch(e => console.error(e));
+    requiresPr = false;
+  } catch (e) {
+    console.error(e);
+    requiresPr = true;
   }
+}
+
+if (requiresPr) {
+  execSync(`git push origin ${prBranchName}`);
+  axios.post('https://api.github.com/repos/jrparish/cascading-merge/pulls', {
+    title: `chore: merge '${currentBranch}' into ${nextBranch}`,
+    head: prBranchName,
+    base: nextBranch
+  }, {
+    headers: {
+      Authorization: `token ${process.env.GH_TOKEN}`
+    }
+  })
 }
 
 console.debug('Cascade complete');
