@@ -68,8 +68,12 @@ try {
 if (hasConflict) {
   console.debug('\n=== Attempting to resolve conflicts ===\n');
   try {
-    execSync('python ./utils/resolveVersionConflict.py ./package.json overwrite', { stdio: 'inherit' })
-    execSync('git add package.json', { stdio: 'inherit' })
+    const sourceFileName = 'package.json';
+    const tmpFileName = 'package.json.tmp';
+    execSync(`mv ${sourceFileName} ${tmpFileName}`);
+    execSync(`node ./utils/resolveVersionConflict ${sourceFileName} true`, { stdio: 'inherit' })
+    execSync(`mv ${tmpFileName} ${sourceFileName}`);
+    execSync(`git add ${sourceFileName}`, { stdio: 'inherit' })
     const conflicts = execSync('git diff --check', { stdio: 'inherit' })
     if (conflicts) {
       throw new Error('There are still conflicts remaining.');
