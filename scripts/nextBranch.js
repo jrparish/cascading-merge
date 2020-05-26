@@ -1,6 +1,7 @@
 const { execSync } = require('child_process');
-const isFirstBranchNewer = require('../utils/isFirstBranchNewer');
 const axios = require('axios');
+
+const isFirstBranchNewer = require('../utils/isFirstBranchNewer');
 
 const currentBranch = execSync('git rev-parse --abbrev-ref HEAD')
   .toString()
@@ -10,7 +11,7 @@ console.debug('currentBranch', currentBranch);
 
 if (currentBranch === 'develop' || !currentBranch.startsWith('release/')) {
   console.debug('Clean exit');
-  return;
+  process.exit();
 }
 
 const currentVersion = currentBranch.slice(currentBranch.indexOf('/') + 1).trim();
