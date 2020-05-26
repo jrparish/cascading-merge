@@ -72,7 +72,7 @@ if (hasConflict) {
     const sourceFileName = 'package.json';
     const tmpFileName = 'package.json.tmp';
     execSync(`mv ${sourceFileName} ${tmpFileName}`);
-    execSync(`node ./utils/resolveVersionConflict ${sourceFileName} true`, { stdio: 'inherit' })
+    execSync(`node ./utils/resolveVersionConflict ${tmpFileName} true`, { stdio: 'inherit' })
     execSync(`mv ${tmpFileName} ${sourceFileName}`);
     execSync(`git add ${sourceFileName}`, { stdio: 'inherit' })
     const conflicts = execSync('git diff --check', { stdio: 'inherit' })
