@@ -68,12 +68,19 @@ try {
 if (hasConflict) {
   console.debug('\n=== Attempting to resolve conflicts ===\n');
   try {
-    const sourceFileName = 'package.json';
-    const tmpFileName = 'package.json.tmp';
-    execSync(`mv ${sourceFileName} ${tmpFileName}`);
-    execSync(`node ./utils/resolveVersionConflict ${tmpFileName} true`, { stdio: 'inherit' })
-    execSync(`mv ${tmpFileName} ${sourceFileName}`);
-    execSync(`git add ${sourceFileName}`, { stdio: 'inherit' })
+    const targetFileMatches = ['package.json', 'sonar-project.properties'];
+    const conflictBuffer = execSync(`git diff --name-only --diff-filter=U`);
+    const conflictFiles = conflictBuffer.toString().trim().split('\n');
+    conflictFiles
+      .filter(filePath => targetFileMatches.some(targetMatch => filePath.endsWith(targetMatch)))
+      .forEach(filePath => {
+        const sourceFileName = filePath;
+        const tmpFileName = `${filePath}.tmp`;
+        execSync(`mv ${sourceFileName} ${tmpFileName}`);
+        execSync(`node ./utils/resolveVersionConflict ${tmpFileName} true`, { stdio: 'inherit' })
+        execSync(`mv ${tmpFileName} ${sourceFileName}`);
+        execSync(`git add ${sourceFileName}`, { stdio: 'inherit' })
+      });
     const conflicts = execSync('git diff --check', { stdio: 'inherit' })
     if (conflicts) {
       throw new Error('There are still conflicts remaining.');
