@@ -7,7 +7,7 @@ const [, , file, overwrite] = process.argv;
 // The conflict resolution logic goes here.
 // Should return the replacementString, or null if you don't wish to resolve this conflict.
 function resolveConflict(head) {
-  if (!head.includes('"version":') || !head.includes('projectVersion=')) {
+  if (!head.includes('"version":') && !head.includes('projectVersion=')) {
     throw new Error("Found non-version related conflict, exiting auto resolution")
   }
   return head;
